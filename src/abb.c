@@ -24,7 +24,6 @@ void nodo_destruir_todo(nodo_t *nodo,void (*destructor)(void *)){
     free(nodo);
     
 }
-
 void abb_destruir_todo(abb_t *abb, void (*destructor)(void *)){
 
     if(abb==NULL)
