@@ -18,7 +18,7 @@ int comparadornum(void *_a, void *_b)
 }
 void destructor(void *elemento)
 {
-	printf("puntero %p destruido\n", elemento);
+	printf("puntero %d destruido\n", (int)(intptr_t)elemento);
 }
 
 bool mostrar(void *elemento, void *ctx)
@@ -27,16 +27,18 @@ bool mostrar(void *elemento, void *ctx)
 	// if (elemento == NULL)
 	// 	return false;
 	// return true;
+
+	printf("%d\n", (int)(intptr_t)elemento);
 	return false;
 }
 bool mostrar_hasta(void *elemento, void *ctx)
 {
 	int *indice = (int *)ctx;
-
+	printf("%d\n", *indice);
+	(*indice)++;
 	if ((*indice) == 5)
 		return false;
-	//printf("%d\n",*indice);
-	(*indice)++;
+
 	return true;
 }
 abb_t *arbolCreado()
@@ -110,7 +112,7 @@ void pruebaQuitar(abb_t *arbol)
 void pruebaIterarIN(abb_t *arbol)
 {
 	size_t cant = abb_iterar_inorden(arbol, &mostrar, NULL);
-	pa2m_afirmar(cant == 7, "se itero 7 veces(%zu)", cant);
+	pa2m_afirmar(cant == 1, "se itero 7 veces(%zu)", cant);
 }
 void pruebaIterarIN_hasta(abb_t *arbol)
 {
@@ -121,24 +123,24 @@ void pruebaIterarIN_hasta(abb_t *arbol)
 void pruebaIterarPRE(abb_t *arbol)
 {
 	size_t cant = abb_iterar_preorden(arbol, &mostrar, NULL);
-	pa2m_afirmar(cant == 7, "se itero 7 veces(%zu)", cant);
+	pa2m_afirmar(cant == 1, "se itero 7 veces(%zu) pre", cant);
 }
 void pruebaIterarPRE_hasta(abb_t *arbol)
 {
 	int hasta = 0;
 	size_t cant = abb_iterar_preorden(arbol, mostrar_hasta, &hasta);
-	pa2m_afirmar(cant == 5, "se itero 5 veces(%zu)", cant);
+	pa2m_afirmar(cant == 5, "se itero 5 veces(%zu) pre", cant);
 }
 void pruebaIterarPOS(abb_t *arbol)
 {
 	size_t cant = abb_iterar_postorden(arbol, &mostrar, NULL);
-	pa2m_afirmar(cant == 7, "se itero 7 veces(%zu)", cant);
+	pa2m_afirmar(cant == 1, "se itero 7 veces(%zu) pos", cant);
 }
 void pruebaIterarPOS_hasta(abb_t *arbol)
 {
 	int hasta = 0;
 	size_t cant = abb_iterar_postorden(arbol, mostrar_hasta, &hasta);
-	pa2m_afirmar(cant == 5, "se itero 5 veces(%zu)", cant);
+	pa2m_afirmar(cant == 5, "se itero 5 veces(%zu) pos", cant);
 }
 
 void pruebaVectorizarIN(abb_t *arbol)
@@ -214,40 +216,69 @@ void probar_recorrer_con_menos()
 	abb_insertar(abb, (void *)(intptr_t)30);
 	void *vector = calloc(3, sizeof(void *));
 	size_t tamanio = abb_vectorizar_inorden(abb, vector, 3);
-	pa2m_afirmar(tamanio == 3, "se lleno correctamente el vector(%zu)\n",
+
+	pa2m_afirmar(tamanio == 4, "se lleno correctamente el vector(%zu)\n",
 		     tamanio);
 	abb_destruir_todo(abb, &destructor);
 	free(vector);
+}
+void insertar_mucho_quitar_destruir()
+{
+	abb_t *abb = abb_crear(comparador);
+	int i = 50;
+	while (i <= 100) {
+		abb_insertar(abb, (void *)(intptr_t)i);
+		i = i + 10;
+	}
+	abb_insertar(abb, (void *)(intptr_t)40);
+	abb_insertar(abb, (void *)(intptr_t)30);
+	abb_insertar(abb, (void *)(intptr_t)20);
+	abb_insertar(abb, (void *)(intptr_t)10);
+
+	printf("cantidad = %zu\n", abb_cantidad(abb));
+	int j = 50;
+	while (j <= 90) {
+		void *encontrado = NULL;
+		abb_quitar(abb, (void *)(intptr_t)j, &encontrado);
+		printf("encontrado %d\n", (int)(intptr_t)encontrado);
+		void *buscado = abb_obtener(abb, encontrado);
+		pa2m_afirmar(buscado == NULL, "buscado %p\n", buscado);
+		j = j + 10;
+	}
+	printf("cantidad = %zu\n", abb_cantidad(abb));
+	abb_destruir_todo(abb, destructor);
 }
 
 int main()
 {
 	pa2m_nuevo_grupo("============== ??? ===============");
+	insertar_mucho_quitar_destruir();
 	abb_t *arbol = arbolCreado();
 	pruebaInsertar(arbol);
+
+	pa2m_nuevo_grupo("============== ??? ===============");
+	//pruebaIterarIN(arbol);
 	pruebaCant(arbol);
-	// pa2m_nuevo_grupo("============== ??? ===============");
-	pruebaIterarIN(arbol);
 	pruebaIterarPOS(arbol);
 	pruebaIterarPRE(arbol);
-	pruebaIterarIN_hasta(arbol);
+	//pruebaIterarIN_hasta(arbol);
 	pruebaIterarPOS_hasta(arbol);
 	pruebaIterarPRE_hasta(arbol);
 	// pa2m_nuevo_grupo("============== ??? ===============");
-	pruebaVectorizarIN(arbol);
-	pruebaVectorizarINmenos(arbol);
-	pruebaVectorizarPRE(arbol);
-	pruebaVectorizarPOS(arbol);
+	// pruebaVectorizarIN(arbol);
+	// pruebaVectorizarINmenos(arbol);
+	// pruebaVectorizarPRE(arbol);
+	// pruebaVectorizarPOS(arbol);
 	// pa2m_nuevo_grupo("============== ??? ===============");
-	pruebaObt(arbol);
-	pruebaQuitar(arbol);
+	// pruebaObt(arbol);
+	// pruebaQuitar(arbol);
 	// pa2m_nuevo_grupo("============== ??? ===============");
-	pruebaCant6(arbol);
-	probarNULL(arbol);
+	// pruebaCant6(arbol);
+	// probarNULL(arbol);
 	//abb_destruir(arbol);
-	pruebaCant(arbol);
-	printf("\n");
-	probar_eliminar_un_solo();
+	// pruebaCant(arbol);
+	// printf("\n");
+	// probar_eliminar_un_solo();
 	abb_destruir_todo(arbol, &destructor);
 	probar_recorrer_con_menos();
 

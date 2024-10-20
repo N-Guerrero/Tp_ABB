@@ -27,6 +27,7 @@ void nodo_destruir_todo(nodo_t *nodo, void (*destructor)(void *))
 	if (destructor != NULL) {
 		destructor(nodo->elemento);
 	}
+
 	free(nodo);
 }
 void abb_destruir_todo(abb_t *abb, void (*destructor)(void *))
@@ -37,8 +38,11 @@ void abb_destruir_todo(abb_t *abb, void (*destructor)(void *))
 	if (abb->raiz != NULL) {
 		nodo_destruir_todo(abb->raiz, destructor);
 	}
-
+	abb->raiz = NULL;
+	abb->nodos = 0;
+	abb->comparador = NULL;
 	free(abb);
+	abb = NULL;
 }
 
 void abb_destruir(abb_t *abb)
@@ -193,137 +197,100 @@ void *abb_obtener(abb_t *abb, void *elemento)
 	return nodo_buscado->elemento;
 }
 
-// size_t nodo_iterar(nodo_t *raiz, abb_t *abb, bool (*f)(void *, void *),
-// 		   void *ctx, int orden, bool *cont)
-// {
-// 	if (raiz == NULL)
-// 		return 0;
-
-// 	size_t iteraciones = 0;
-
-// 	if (orden == 0) {
-// 		iteraciones += nodo_iterar(raiz->izq, abb, f, ctx, orden, cont);
-
-// 		if ((*cont)){
-
-// 		if (!f(raiz->elemento, ctx)) {
-// 			*cont = false;
-//             return iteraciones;
-
-// 		}
-//         iteraciones++;
-//         }
-//         if ((*cont)){
-// 		iteraciones += nodo_iterar(raiz->der, abb, f, ctx, orden, cont);
-//         }
-// 	}
-// 	if (orden == -1) {
-// 		if ((*cont)){
-
-// 		if (!f(raiz->elemento, ctx)) {
-// 			return iteraciones;
-// 		}
-//         iteraciones++;
-// }
-//         if ((*cont))
-// 		iteraciones += nodo_iterar(raiz->izq, abb, f, ctx, orden, cont);
-//         if ((*cont))
-// 		iteraciones += nodo_iterar(raiz->der, abb, f, ctx, orden, cont);
-// 	}
-// 	if (orden == 1) {
-// 		iteraciones += nodo_iterar(raiz->izq, abb, f, ctx, orden, cont);
-
-// 		iteraciones += nodo_iterar(raiz->der, abb, f, ctx, orden, cont);
-// 		if ((*cont)){
-
-// 		if (!f(raiz->elemento, ctx)) {
-// 			return iteraciones ;
-// 		}
-//         iteraciones++;
-//         }
-// 	}
-// 	return iteraciones;
-// }
 size_t nodo_iterar_inorden(nodo_t *raiz, abb_t *abb, bool (*f)(void *, void *),
-			   void *ctx)
+			   void *ctx, bool *continuar)
 {
-	if (raiz == NULL) {
+	if (raiz == NULL || !(*continuar)) {
 		return 0;
 	}
-	size_t cant = 0;
-	cant += nodo_iterar_inorden(raiz->izq, abb, f, ctx);
 
-	if (!f(raiz->elemento, ctx)) {
+	size_t cant = 0;
+
+	cant += nodo_iterar_inorden(raiz->izq, abb, f, ctx, continuar);
+	if (!(*continuar)) {
 		return cant;
 	}
+
+	if (!f(raiz->elemento, ctx)) {
+		*continuar = false;
+
+		return cant + 1;
+	}
 	cant++;
-	cant += nodo_iterar_inorden(raiz->der, abb, f, ctx);
+
+	cant += nodo_iterar_inorden(raiz->der, abb, f, ctx, continuar);
+
 	return cant;
 }
 
 size_t nodo_iterar_postorden(nodo_t *raiz, abb_t *abb,
-			     bool (*f)(void *, void *), void *ctx)
+			     bool (*f)(void *, void *), void *ctx,
+			     bool *continuar)
 {
-	if (raiz == NULL) {
+	if (raiz == NULL || !(*continuar)) {
 		return 0;
 	}
 	size_t cant = 0;
-	cant += nodo_iterar_postorden(raiz->izq, abb, f, ctx);
 
-	cant += nodo_iterar_postorden(raiz->der, abb, f, ctx);
-	if (!f(raiz->elemento, ctx)) {
+	cant += nodo_iterar_postorden(raiz->izq, abb, f, ctx, continuar);
+
+	cant += nodo_iterar_postorden(raiz->der, abb, f, ctx, continuar);
+	if (!(*continuar)) {
 		return cant;
 	}
+	if (!f(raiz->elemento, ctx)) {
+		*continuar = false;
+
+		return cant + 1;
+	}
+
 	cant++;
+
 	return cant;
 }
 
 size_t nodo_iterar_preorden(nodo_t *raiz, abb_t *abb, bool (*f)(void *, void *),
-			    void *ctx)
+			    void *ctx, bool *continuar)
 {
-	if (raiz == NULL) {
+	if (raiz == NULL || !(*continuar)) {
 		return 0;
 	}
 	size_t cant = 0;
-	if (!f(raiz->elemento, ctx)) {
+	if (!(*continuar)) {
 		return cant;
 	}
+	if (!f(raiz->elemento, ctx)) {
+		*continuar = false;
+		return cant + 1;
+	}
 	cant++;
-	cant += nodo_iterar_preorden(raiz->izq, abb, f, ctx);
+	cant += nodo_iterar_preorden(raiz->izq, abb, f, ctx, continuar);
 
-	cant += nodo_iterar_preorden(raiz->der, abb, f, ctx);
+	cant += nodo_iterar_preorden(raiz->der, abb, f, ctx, continuar);
 
 	return cant;
 }
 size_t abb_iterar_inorden(abb_t *abb, bool (*f)(void *, void *), void *ctx)
 {
-	if (abb == NULL || abb->raiz == NULL || f == NULL)
+	if (abb == NULL || abb->raiz == NULL || f == NULL) {
 		return 0;
-	size_t cantidad = nodo_iterar_inorden(abb->raiz, abb, f, ctx);
-	if (cantidad == 0) {
-		cantidad++;
 	}
-	return cantidad;
+	bool continuar = true;
+	return nodo_iterar_inorden(abb->raiz, abb, f, ctx, &continuar);
 }
 size_t abb_iterar_preorden(abb_t *abb, bool (*f)(void *, void *), void *ctx)
 {
 	if (abb == NULL || abb->raiz == NULL || f == NULL)
 		return 0;
-	size_t cantidad = nodo_iterar_inorden(abb->raiz, abb, f, ctx);
-	if (cantidad == 0) {
-		cantidad++;
-	}
-	return cantidad;
+	bool continuar = true;
+	return nodo_iterar_preorden(abb->raiz, abb, f, ctx, &continuar);
 }
 size_t abb_iterar_postorden(abb_t *abb, bool (*f)(void *, void *), void *ctx)
 {
 	if (abb == NULL || abb->raiz == NULL || f == NULL)
 		return 0;
-	size_t cantidad = nodo_iterar_inorden(abb->raiz, abb, f, ctx);
-	if (cantidad == 0) {
-		cantidad++;
-	}
-	return cantidad;
+	bool continuar = true;
+	return nodo_iterar_postorden(abb->raiz, abb, f, ctx, &continuar);
 }
 struct vectorizar {
 	void **vector;
