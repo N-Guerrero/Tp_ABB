@@ -155,7 +155,8 @@ void pruebaVectorizarINmenos(abb_t *arbol)
 {
 	void *vector = calloc(5, sizeof(void *));
 	size_t tamanio = abb_vectorizar_inorden(arbol, vector, 5);
-	pa2m_afirmar(tamanio == 5, "se lleno correctamente el vector(%zu)",tamanio);
+	pa2m_afirmar(tamanio == 5, "se lleno correctamente el vector(%zu)",
+		     tamanio);
 	for (int i = 0; i < 5; i++) {
 		printf("vector pos %d valor %p\n", i, ((void **)vector)[i]);
 	}
@@ -213,18 +214,18 @@ int main()
 	pruebaCant(arbol);
 	// pa2m_nuevo_grupo("============== ??? ===============");
 	pruebaIterarIN(arbol);
-	 pruebaIterarPOS(arbol);
-	 pruebaIterarPRE(arbol);
+	pruebaIterarPOS(arbol);
+	pruebaIterarPRE(arbol);
 	pruebaIterarIN_hasta(arbol);
-	 pruebaIterarPOS_hasta(arbol);
-	 pruebaIterarPRE_hasta(arbol);
+	pruebaIterarPOS_hasta(arbol);
+	pruebaIterarPRE_hasta(arbol);
 	// pa2m_nuevo_grupo("============== ??? ===============");
-	 pruebaVectorizarIN(arbol);
-	 pruebaVectorizarINmenos(arbol);
-	 pruebaVectorizarPRE(arbol);
-	 pruebaVectorizarPOS(arbol);
+	pruebaVectorizarIN(arbol);
+	pruebaVectorizarINmenos(arbol);
+	pruebaVectorizarPRE(arbol);
+	pruebaVectorizarPOS(arbol);
 	// pa2m_nuevo_grupo("============== ??? ===============");
-	 pruebaObt(arbol);
+	pruebaObt(arbol);
 	pruebaQuitar(arbol);
 	// pa2m_nuevo_grupo("============== ??? ===============");
 	pruebaCant6(arbol);
