@@ -20,10 +20,10 @@ void nodo_destruir_todo(nodo_t *nodo, void (*destructor)(void *))
 	if (nodo == NULL) {
 		return;
 	}
-	//if (nodo->izq != NULL)
-	nodo_destruir_todo(nodo->izq, destructor);
-	//if (nodo->der != NULL)
-	nodo_destruir_todo(nodo->der, destructor);
+	if (nodo->izq != NULL)
+		nodo_destruir_todo(nodo->izq, destructor);
+	if (nodo->der != NULL)
+		nodo_destruir_todo(nodo->der, destructor);
 	if (destructor != NULL) {
 		destructor(nodo->elemento);
 	}
@@ -37,7 +37,7 @@ void abb_destruir_todo(abb_t *abb, void (*destructor)(void *))
 	if (abb->raiz != NULL) {
 		nodo_destruir_todo(abb->raiz, destructor);
 	}
-	destructor(abb->raiz);
+
 	free(abb);
 }
 
