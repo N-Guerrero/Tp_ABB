@@ -158,6 +158,15 @@ bool abb_quitar(abb_t *abb, void *buscado, void **encontrado)
 	if (abb == NULL || abb->raiz == NULL || encontrado == NULL) {
 		return false;
 	}
+	if (abb->comparador(buscado, abb->raiz->elemento) == 0 &&
+	    abb->raiz->izq == NULL && abb->raiz->der == NULL) {
+		*encontrado = abb->raiz->elemento;
+		free(abb->raiz);
+		abb->raiz = NULL;
+		abb->nodos--;
+		return true;
+	}
+
 	abb->raiz = nodo_quitar_rec(abb->raiz, abb, buscado, encontrado);
 
 	if (*encontrado == NULL)
@@ -290,19 +299,31 @@ size_t abb_iterar_inorden(abb_t *abb, bool (*f)(void *, void *), void *ctx)
 {
 	if (abb == NULL || abb->raiz == NULL || f == NULL)
 		return 0;
-	return nodo_iterar_inorden(abb->raiz, abb, f, ctx);
+	size_t cantidad = nodo_iterar_inorden(abb->raiz, abb, f, ctx);
+	if (cantidad == 0) {
+		cantidad++;
+	}
+	return cantidad;
 }
 size_t abb_iterar_preorden(abb_t *abb, bool (*f)(void *, void *), void *ctx)
 {
 	if (abb == NULL || abb->raiz == NULL || f == NULL)
 		return 0;
-	return nodo_iterar_preorden(abb->raiz, abb, f, ctx);
+	size_t cantidad = nodo_iterar_inorden(abb->raiz, abb, f, ctx);
+	if (cantidad == 0) {
+		cantidad++;
+	}
+	return cantidad;
 }
 size_t abb_iterar_postorden(abb_t *abb, bool (*f)(void *, void *), void *ctx)
 {
 	if (abb == NULL || abb->raiz == NULL || f == NULL)
 		return 0;
-	return nodo_iterar_postorden(abb->raiz, abb, f, ctx);
+	size_t cantidad = nodo_iterar_inorden(abb->raiz, abb, f, ctx);
+	if (cantidad == 0) {
+		cantidad++;
+	}
+	return cantidad;
 }
 struct vectorizar {
 	void **vector;

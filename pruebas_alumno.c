@@ -23,11 +23,11 @@ void destructor(void *elemento)
 
 bool mostrar(void *elemento, void *ctx)
 {
-	printf(" puntero %p\n", elemento);
-	if (elemento == NULL)
-		return false;
-	return true;
-	// return false;
+	// printf(" puntero %p\n", elemento);
+	// if (elemento == NULL)
+	// 	return false;
+	// return true;
+	return false;
 }
 bool mostrar_hasta(void *elemento, void *ctx)
 {
