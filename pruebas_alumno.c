@@ -27,6 +27,7 @@ bool mostrar(void *elemento, void *ctx)
 	if (elemento == NULL)
 		return false;
 	return true;
+	// return false;
 }
 bool mostrar_hasta(void *elemento, void *ctx)
 {
@@ -181,6 +182,18 @@ void probarNULL(abb_t *arbol)
 	pa2m_afirmar(abb_vectorizar_inorden(arbol, NULL, 0) == 0,
 		     "iterar con NULL");
 }
+void probar_eliminar_un_solo()
+{
+	abb_t *abb = abb_crear(comparador);
+	abb_insertar(abb, (void *)(intptr_t)10);
+	void *encontrado = NULL;
+	abb_quitar(abb, (void *)(intptr_t)10, &encontrado);
+	void *nulo = abb_obtener(abb, encontrado);
+	pa2m_afirmar(abb_cantidad(abb) == 0,
+		     "hay 0 elementos, se quito %p, se encontro %p\n",
+		     encontrado, nulo);
+	abb_destruir_todo(abb, &destructor);
+}
 
 int main()
 {
@@ -203,9 +216,12 @@ int main()
 	// pruebaObt(arbol);
 	pruebaQuitar(arbol);
 	// pa2m_nuevo_grupo("============== ??? ===============");
-	pruebaCant6(arbol);
+	//pruebaCant6(arbol);
 	probarNULL(arbol);
 	//abb_destruir(arbol);
+	pruebaCant(arbol);
+	printf("\n");
+	probar_eliminar_un_solo();
 	abb_destruir_todo(arbol, &destructor);
 
 	return pa2m_mostrar_reporte();

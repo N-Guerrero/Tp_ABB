@@ -17,6 +17,9 @@ abb_t *abb_crear(int (*comparador)(void *, void *))
 
 void nodo_destruir_todo(nodo_t *nodo, void (*destructor)(void *))
 {
+	if (nodo == NULL) {
+		return;
+	}
 	if (nodo->izq != NULL)
 		nodo_destruir_todo(nodo->izq, destructor);
 	if (nodo->der != NULL)
@@ -181,36 +184,43 @@ void *abb_obtener(abb_t *abb, void *elemento)
 }
 
 size_t nodo_iterar(nodo_t *raiz, abb_t *abb, bool (*f)(void *, void *),
-		   void *ctx, int orden)
+		   void *ctx, int orden, bool *cont)
 {
 	if (raiz == NULL)
 		return 0;
-	size_t iteraciones = 0;
-	if (orden == 0) {
-		iteraciones += nodo_iterar(raiz->izq, abb, f, ctx, orden);
 
-		iteraciones++;
+	size_t iteraciones = 0;
+
+	if (orden == 0) {
+		iteraciones += nodo_iterar(raiz->izq, abb, f, ctx, orden, cont);
+
+		if ((*cont))
+			iteraciones++;
+
 		if (!f(raiz->elemento, ctx)) {
+			*cont = false;
 			return iteraciones - 1;
 		}
 
-		iteraciones += nodo_iterar(raiz->der, abb, f, ctx, orden);
+		iteraciones += nodo_iterar(raiz->der, abb, f, ctx, orden, cont);
 	}
 	if (orden == -1) {
-		iteraciones++;
+		if ((*cont))
+			iteraciones++;
 		if (!f(raiz->elemento, ctx)) {
 			return iteraciones - 1;
 		}
 
-		iteraciones += nodo_iterar(raiz->izq, abb, f, ctx, orden);
+		iteraciones += nodo_iterar(raiz->izq, abb, f, ctx, orden, cont);
 
-		iteraciones += nodo_iterar(raiz->der, abb, f, ctx, orden);
+		iteraciones += nodo_iterar(raiz->der, abb, f, ctx, orden, cont);
 	}
 	if (orden == 1) {
-		iteraciones += nodo_iterar(raiz->izq, abb, f, ctx, orden);
+		iteraciones += nodo_iterar(raiz->izq, abb, f, ctx, orden, cont);
 
-		iteraciones += nodo_iterar(raiz->der, abb, f, ctx, orden);
-		iteraciones++;
+		iteraciones += nodo_iterar(raiz->der, abb, f, ctx, orden, cont);
+		if ((*cont))
+			iteraciones++;
 		if (!f(raiz->elemento, ctx)) {
 			return iteraciones - 1;
 		}
@@ -220,21 +230,24 @@ size_t nodo_iterar(nodo_t *raiz, abb_t *abb, bool (*f)(void *, void *),
 
 size_t abb_iterar_inorden(abb_t *abb, bool (*f)(void *, void *), void *ctx)
 {
+	bool c = true;
 	if (abb == NULL || abb->raiz == NULL || f == NULL)
 		return 0;
-	return nodo_iterar(abb->raiz, abb, f, ctx, 0);
+	return nodo_iterar(abb->raiz, abb, f, ctx, 0, &c);
 }
 size_t abb_iterar_preorden(abb_t *abb, bool (*f)(void *, void *), void *ctx)
 {
+	bool c = true;
 	if (abb == NULL || abb->raiz == NULL || f == NULL)
 		return 0;
-	return nodo_iterar(abb->raiz, abb, f, ctx, -1);
+	return nodo_iterar(abb->raiz, abb, f, ctx, -1, &c);
 }
 size_t abb_iterar_postorden(abb_t *abb, bool (*f)(void *, void *), void *ctx)
 {
+	bool c = true;
 	if (abb == NULL || abb->raiz == NULL || f == NULL)
 		return 0;
-	return nodo_iterar(abb->raiz, abb, f, ctx, 1);
+	return nodo_iterar(abb->raiz, abb, f, ctx, 1, &c);
 }
 bool llenar_vector(void *elemento, void *vector)
 {
