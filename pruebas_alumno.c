@@ -1,5 +1,7 @@
 #include "pa2m.h"
 #include "src/abb.h"
+#include <stdint.h>
+
 int comparador(void *a, void *b)
 {
 	if (a == b)
@@ -26,6 +28,15 @@ bool mostrar(void *elemento, void *ctx)
 		return false;
 	return true;
 }
+bool mostrar_hasta(void* elemento,void* ctx){
+	int* indice = (int*)ctx;
+	
+	if((*indice)==5)
+		return false;
+	//printf("%d\n",*indice);
+	(*indice)++;
+	return true;
+}
 abb_t *arbolCreado()
 {
 	abb_t *arbol = abb_crear(&comparador);
@@ -40,27 +51,34 @@ void destruirArbol(abb_t *arbol)
 }
 void pruebaInsertar(abb_t *arbol)
 {
-	pa2m_afirmar(abb_insertar(arbol, (void *)50), "se inserto %d al arbol",
+	pa2m_afirmar(abb_insertar(arbol, (void*)(intptr_t)50), "se inserto %d al arbol",
 		     50);
-	pa2m_afirmar(abb_insertar(arbol, (void *)19), "se inserto %d al arbol",
+	pa2m_afirmar(abb_insertar(arbol, (void*)(intptr_t)19), "se inserto %d al arbol",
 		     19);
-	pa2m_afirmar(abb_insertar(arbol, (void *)8), "se inserto %d al arbol",
+	pa2m_afirmar(abb_insertar(arbol, (void*)(intptr_t)8), "se inserto %d al arbol",
 		     8);
-	pa2m_afirmar(abb_insertar(arbol, (void *)3), "se inserto %d al arbol",
-		     3);
-	pa2m_afirmar(abb_insertar(arbol, (void *)46), "se inserto %d al arbol",
+	pa2m_afirmar(abb_insertar(arbol, (void*)(intptr_t)60), "se inserto %d al arbol",
+		     60);
+	pa2m_afirmar(abb_insertar(arbol, (void*)(intptr_t)46), "se inserto %d al arbol",
 		     46);
-	pa2m_afirmar(abb_insertar(arbol, (void *)25), "se inserto %d al arbol",
+	pa2m_afirmar(abb_insertar(arbol, (void*)(intptr_t)25), "se inserto %d al arbol",
 		     25);
-	pa2m_afirmar(abb_insertar(arbol, (void *)10), "se inserto %d al arbol",
+	pa2m_afirmar(abb_insertar(arbol, (void*)(intptr_t)10), "se inserto %d al arbol",
 		     10);
+	printf("\n");
 }
 void pruebaCant(abb_t *cant)
 {
-	pa2m_afirmar(abb_cantidad(cant) == 7,
-		     "cantidad correcta(%d) en el arbol", 7);
+	size_t nodos =abb_cantidad(cant);
+	pa2m_afirmar(nodos == 7,
+		     "cantidad correcta(%d) en el arbol(%zu)", 7,nodos);
 }
-
+void pruebaCant6(abb_t *cant)
+{
+	size_t nodos =abb_cantidad(cant);
+	pa2m_afirmar(nodos == 6,
+		     "cantidad correcta(%d) en el arbol(%zu)", 6,nodos);
+}
 void pruebaObt(abb_t *arbol)
 {
 	pa2m_afirmar(abb_obtener(arbol, (void *)50) != NULL, "se encontro %d ",
@@ -69,8 +87,8 @@ void pruebaObt(abb_t *arbol)
 		     "se encontro %d al arbol", 19);
 	pa2m_afirmar(abb_obtener(arbol, (void *)8) != NULL,
 		     "se encontro %d al arbol", 8);
-	pa2m_afirmar(abb_obtener(arbol, (void *)3) != NULL,
-		     "se encontro %d al arbol", 3);
+	pa2m_afirmar(abb_obtener(arbol, (void *)60) != NULL,
+		     "se encontro %d al arbol", 60);
 	pa2m_afirmar(abb_obtener(arbol, (void *)46) != NULL,
 		     "se encontro %d al arbol", 46);
 	pa2m_afirmar(abb_obtener(arbol, (void *)25) != NULL,
@@ -81,26 +99,45 @@ void pruebaObt(abb_t *arbol)
 
 void pruebaQuitar(abb_t *arbol)
 {
-	abb_insertar(arbol, (void *)40);
+	
 	void *encontrado = NULL;
-	bool prueba = abb_quitar(arbol, (void *)40, &encontrado);
+	bool prueba = abb_quitar(arbol, (void*)(intptr_t)50, &encontrado);
 	pa2m_afirmar(prueba, "se encontro %p", encontrado);
+	printf("\n");
 }
 
 void pruebaIterarIN(abb_t *arbol)
 {
 	size_t cant = abb_iterar_inorden(arbol, &mostrar, NULL);
-	pa2m_afirmar(cant == 7, "se itero 7 veces");
+	pa2m_afirmar(cant == 7, "se itero 7 veces(%zu)",cant);
+}
+void pruebaIterarIN_hasta(abb_t *arbol)
+{
+	int hasta = 0;
+	size_t cant = abb_iterar_inorden(arbol, mostrar_hasta, &hasta);
+	pa2m_afirmar(cant == 5, "se itero 5 veces(%zu)",cant);
 }
 void pruebaIterarPRE(abb_t *arbol)
 {
 	size_t cant = abb_iterar_preorden(arbol, &mostrar, NULL);
-	pa2m_afirmar(cant == 7, "se itero 7 veces");
+	pa2m_afirmar(cant == 7, "se itero 7 veces(%zu)",cant);
+}
+void pruebaIterarPRE_hasta(abb_t *arbol)
+{
+	int hasta = 0;
+	size_t cant = abb_iterar_preorden(arbol, mostrar_hasta, &hasta);
+	pa2m_afirmar(cant == 5, "se itero 5 veces(%zu)",cant);
 }
 void pruebaIterarPOS(abb_t *arbol)
 {
 	size_t cant = abb_iterar_postorden(arbol, &mostrar, NULL);
-	pa2m_afirmar(cant == 7, "se itero 7 veces");
+	pa2m_afirmar(cant == 7, "se itero 7 veces(%zu)",cant);
+}
+void pruebaIterarPOS_hasta(abb_t *arbol)
+{
+	int hasta = 0;
+	size_t cant = abb_iterar_postorden(arbol, mostrar_hasta, &hasta);
+	pa2m_afirmar(cant == 5, "se itero 5 veces(%zu)",cant);
 }
 
 void pruebaVectorizarIN(abb_t *arbol)
@@ -151,18 +188,22 @@ int main()
 	abb_t *arbol = arbolCreado();
 	pruebaInsertar(arbol);
 	pruebaCant(arbol);
-	pa2m_nuevo_grupo("============== ??? ===============");
-	pruebaIterarIN(arbol);
-	pruebaIterarPOS(arbol);
-	pruebaIterarPRE(arbol);
-	pa2m_nuevo_grupo("============== ??? ===============");
-	pruebaVectorizarIN(arbol);
-	pruebaVectorizarPRE(arbol);
-	pruebaVectorizarPOS(arbol);
-	pa2m_nuevo_grupo("============== ??? ===============");
-	pruebaObt(arbol);
-	pruebaQuitar(arbol);
-	pa2m_nuevo_grupo("============== ??? ===============");
+	// pa2m_nuevo_grupo("============== ??? ===============");
+	 pruebaIterarIN(arbol);
+	 pruebaIterarPOS(arbol);
+	 pruebaIterarPRE(arbol);
+	pruebaIterarIN_hasta(arbol);
+	pruebaIterarPOS_hasta(arbol);
+	pruebaIterarPRE_hasta(arbol);
+	// pa2m_nuevo_grupo("============== ??? ===============");
+	// pruebaVectorizarIN(arbol);
+	// pruebaVectorizarPRE(arbol);
+	// pruebaVectorizarPOS(arbol);
+	// pa2m_nuevo_grupo("============== ??? ===============");
+	// pruebaObt(arbol);
+	 pruebaQuitar(arbol);
+	// pa2m_nuevo_grupo("============== ??? ===============");
+	pruebaCant6(arbol);
 	probarNULL(arbol);
 	//abb_destruir(arbol);
 	abb_destruir_todo(arbol, &destructor);
