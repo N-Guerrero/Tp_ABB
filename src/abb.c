@@ -20,12 +20,14 @@ void nodo_destruir_todo(nodo_t *nodo, void (*destructor)(void *))
 	if (nodo == NULL) {
 		return;
 	}
-	if (nodo->izq != NULL)
+	//if (nodo->izq != NULL)
 		nodo_destruir_todo(nodo->izq, destructor);
-	if (nodo->der != NULL)
+	//if (nodo->der != NULL)
 		nodo_destruir_todo(nodo->der, destructor);
-	if (destructor != NULL)
+	if (destructor != NULL){
+        
 		destructor(nodo->elemento);
+        }
 	free(nodo);
 }
 void abb_destruir_todo(abb_t *abb, void (*destructor)(void *))
@@ -249,31 +251,41 @@ size_t abb_iterar_postorden(abb_t *abb, bool (*f)(void *, void *), void *ctx)
 		return 0;
 	return nodo_iterar(abb->raiz, abb, f, ctx, 1, &c);
 }
-bool llenar_vector(void *elemento, void *vector)
+struct vectorizar{
+    void** vector;
+    size_t pos;
+    size_t tamanio;
+};
+bool llenar_vector(void *elemento, void *ctx)
 {
-	void ***ptrvector = vector;
-	**ptrvector = elemento;
-	(*ptrvector)++;
+	struct vectorizar *datos=(struct vectorizar*)ctx;
+    if(datos->pos>=datos->tamanio)
+    return false;
+    
+    datos->vector[datos->pos]=elemento;
+    datos->pos++;
+
+    
 	return true;
 }
 size_t abb_vectorizar_inorden(abb_t *abb, void **vector, size_t tamaño)
 {
 	if (vector == NULL || abb == NULL || abb->raiz == NULL)
 		return 0;
-	void **ptrvector = vector;
-	return abb_iterar_inorden(abb, llenar_vector, &ptrvector);
+	struct vectorizar datos ={.vector=vector,.pos=0,.tamanio=tamaño};
+	return abb_iterar_inorden(abb, llenar_vector, &datos);
 }
 size_t abb_vectorizar_preorden(abb_t *abb, void **vector, size_t tamaño)
 {
 	if (vector == NULL || abb == NULL || abb->raiz == NULL)
 		return 0;
-	void **ptrvector = vector;
-	return abb_iterar_preorden(abb, llenar_vector, &ptrvector);
+	struct vectorizar datos ={.vector=vector,.pos=0,.tamanio=tamaño};
+	return abb_iterar_preorden(abb, llenar_vector, &datos);
 }
 size_t abb_vectorizar_postorden(abb_t *abb, void **vector, size_t tamaño)
 {
 	if (vector == NULL || abb == NULL || abb->raiz == NULL)
 		return 0;
-	void **ptrvector = vector;
-	return abb_iterar_postorden(abb, llenar_vector, &ptrvector);
+	struct vectorizar datos ={.vector=vector,.pos=0,.tamanio=tamaño};
+	return abb_iterar_postorden(abb, llenar_vector, &datos);
 }
