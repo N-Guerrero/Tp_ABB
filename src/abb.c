@@ -37,7 +37,7 @@ void abb_destruir_todo(abb_t *abb, void (*destructor)(void *))
 	if (abb->raiz != NULL) {
 		nodo_destruir_todo(abb->raiz, destructor);
 	}
-
+	destructor(abb->raiz);
 	free(abb);
 }
 
@@ -103,10 +103,11 @@ nodo_t *nodo_buscar(nodo_t *nodo_actual, abb_t *abb, void *elemento)
 
 	if (comparador == 0) {
 		return nodo_actual;
-	} else if (comparador < 0)
+	} else if (comparador < 0) {
 		return nodo_buscar(nodo_actual->izq, abb, elemento);
-	if (comparador > 0)
+	} else if (comparador > 0) {
 		return nodo_buscar(nodo_actual->der, abb, elemento);
+	}
 	return NULL;
 }
 
@@ -154,8 +155,7 @@ nodo_t *nodo_quitar_rec(nodo_t *nodo_actual, abb_t *abb, void *elemento,
 
 bool abb_quitar(abb_t *abb, void *buscado, void **encontrado)
 {
-	if (abb == NULL || abb->raiz == NULL || buscado == NULL ||
-	    encontrado == NULL) {
+	if (abb == NULL || encontrado == NULL) {
 		return false;
 	}
 	abb->raiz = nodo_quitar_rec(abb->raiz, abb, buscado, encontrado);
@@ -195,35 +195,41 @@ size_t nodo_iterar(nodo_t *raiz, abb_t *abb, bool (*f)(void *, void *),
 	if (orden == 0) {
 		iteraciones += nodo_iterar(raiz->izq, abb, f, ctx, orden, cont);
 
-		if ((*cont))
+		if ((*cont)) {
+			if (!f(raiz->elemento, ctx)) {
+				*cont = false;
+				return iteraciones;
+			}
 			iteraciones++;
-
-		if (!f(raiz->elemento, ctx)) {
-			*cont = false;
-			return iteraciones - 1;
 		}
-
-		iteraciones += nodo_iterar(raiz->der, abb, f, ctx, orden, cont);
+		if ((*cont)) {
+			iteraciones += nodo_iterar(raiz->der, abb, f, ctx,
+						   orden, cont);
+		}
 	}
 	if (orden == -1) {
-		if ((*cont))
+		if ((*cont)) {
+			if (!f(raiz->elemento, ctx)) {
+				return iteraciones;
+			}
 			iteraciones++;
-		if (!f(raiz->elemento, ctx)) {
-			return iteraciones - 1;
 		}
-
-		iteraciones += nodo_iterar(raiz->izq, abb, f, ctx, orden, cont);
-
-		iteraciones += nodo_iterar(raiz->der, abb, f, ctx, orden, cont);
+		if ((*cont))
+			iteraciones += nodo_iterar(raiz->izq, abb, f, ctx,
+						   orden, cont);
+		if ((*cont))
+			iteraciones += nodo_iterar(raiz->der, abb, f, ctx,
+						   orden, cont);
 	}
 	if (orden == 1) {
 		iteraciones += nodo_iterar(raiz->izq, abb, f, ctx, orden, cont);
 
 		iteraciones += nodo_iterar(raiz->der, abb, f, ctx, orden, cont);
-		if ((*cont))
+		if ((*cont)) {
+			if (!f(raiz->elemento, ctx)) {
+				return iteraciones;
+			}
 			iteraciones++;
-		if (!f(raiz->elemento, ctx)) {
-			return iteraciones - 1;
 		}
 	}
 	return iteraciones;

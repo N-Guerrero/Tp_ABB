@@ -205,6 +205,20 @@ void probar_eliminar_un_solo()
 		     encontrado, nulo);
 	abb_destruir_todo(abb, &destructor);
 }
+void probar_recorrer_con_menos()
+{
+	abb_t *abb = abb_crear(comparador);
+	abb_insertar(abb, (void *)(intptr_t)10);
+	abb_insertar(abb, (void *)(intptr_t)20);
+	abb_insertar(abb, (void *)(intptr_t)5);
+	abb_insertar(abb, (void *)(intptr_t)30);
+	void *vector = calloc(3, sizeof(void *));
+	size_t tamanio = abb_vectorizar_inorden(abb, vector, 3);
+	pa2m_afirmar(tamanio == 3, "se lleno correctamente el vector(%zu)\n",
+		     tamanio);
+	abb_destruir_todo(abb, &destructor);
+	free(vector);
+}
 
 int main()
 {
@@ -230,11 +244,12 @@ int main()
 	// pa2m_nuevo_grupo("============== ??? ===============");
 	pruebaCant6(arbol);
 	probarNULL(arbol);
-	abb_destruir(arbol);
+	//abb_destruir(arbol);
 	pruebaCant(arbol);
 	printf("\n");
 	probar_eliminar_un_solo();
 	abb_destruir_todo(arbol, &destructor);
+	probar_recorrer_con_menos();
 
 	return pa2m_mostrar_reporte();
 }
