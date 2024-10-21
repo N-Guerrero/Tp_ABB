@@ -234,22 +234,22 @@ void insertar_mucho_quitar_destruir()
 	abb_t *abb = abb_crear(comparador);
 	int i = 100;
 	while (i <= 150) {
-		abb_insertar(abb, (void *)(intptr_t)100);
+		abb_insertar(abb, (void *)100);
 		i = i + 10;
 	}
-	abb_insertar(abb, (void *)(intptr_t)100);
-	abb_insertar(abb, (void *)(intptr_t)80);
+	abb_insertar(abb, (void *)100);
+	abb_insertar(abb, (void *)80);
 
 	printf("cantidad = %zu\n", abb_cantidad(abb));
 	void *encontrado80 = NULL;
-	abb_quitar(abb, (void *)(intptr_t)80, &encontrado80);
+	abb_quitar(abb, (void *)80, &encontrado80);
 	printf("encontrado 100 %p\n", encontrado80);
 	void *buscado80 = abb_obtener(abb, encontrado80);
 	pa2m_afirmar(buscado80 != encontrado80, "buscado %p\n", buscado80);
 
 	printf("cantidad = %zu\n", abb_cantidad(abb));
 	void *encontrado100 = NULL;
-	abb_quitar(abb, (void *)(intptr_t)100, &encontrado100);
+	abb_quitar(abb, (void *)100, &encontrado100);
 	printf("encontrado 100 %p\n", encontrado100);
 	void *buscado100 = abb_obtener(abb, encontrado100);
 	printf("comparacion %d\n", comparador(buscado100, encontrado100));
@@ -258,20 +258,40 @@ void insertar_mucho_quitar_destruir()
 	printf("cantidad = %zu\n", abb_cantidad(abb));
 	abb_destruir_todo(abb, destructor);
 }
+void insertar_repetidos()
+{
+	abb_t *abb = abb_crear(comparadornum);
+	int a = 10, b = 10, c = 5, d = 15, f = 10;
+	abb_insertar(abb, &a);
+	abb_insertar(abb, &b);
+	abb_insertar(abb, &c);
+	abb_insertar(abb, &d);
+	abb_insertar(abb, &f);
+	printf("cantidad = %zu\n", abb_cantidad(abb));
+	void *encontrado80 = NULL;
+	abb_quitar(abb, &a, &encontrado80);
+	printf("encontrado a %p\n", encontrado80);
+	void *buscado80 = abb_obtener(abb, encontrado80);
+	pa2m_afirmar(buscado80 != encontrado80, "buscado %p\n", buscado80);
+	void *buscado100 = abb_obtener(abb, &b);
+	pa2m_afirmar(buscado100 != encontrado80, "buscado %p\n", buscado100);
+	printf("cantidad = %zu\n", abb_cantidad(abb));
+	abb_destruir_todo(abb, destructor);
+}
 
 int main()
 {
 	pa2m_nuevo_grupo("============== ??? ===============");
-	insertar_mucho_quitar_destruir();
+	//insertar_mucho_quitar_destruir();
 	abb_t *arbol = arbolCreado();
 	pruebaInsertar(arbol);
 
 	//pa2m_nuevo_grupo("============== ??? ===============");
-	pruebaIterarIN(arbol);
+	//pruebaIterarIN(arbol);
 	//pruebaCant(arbol);
 	//pruebaIterarPOS(arbol);
 	//pruebaIterarPRE(arbol);
-	pruebaIterarIN_hasta(arbol);
+	//pruebaIterarIN_hasta(arbol);
 	//pruebaIterarPOS_hasta(arbol);
 	//pruebaIterarPRE_hasta(arbol);
 	// pa2m_nuevo_grupo("============== ??? ===============");
@@ -281,16 +301,17 @@ int main()
 	// pruebaVectorizarPOS(arbol);
 	// pa2m_nuevo_grupo("============== ??? ===============");
 	// pruebaObt(arbol);
-	// pruebaQuitar(arbol);
+	pruebaQuitar(arbol);
 	// pa2m_nuevo_grupo("============== ??? ===============");
 	// pruebaCant6(arbol);
 	// probarNULL(arbol);
 	//abb_destruir(arbol);
-	// pruebaCant(arbol);
+
 	// printf("\n");
 	// probar_eliminar_un_solo();
 	abb_destruir_todo(arbol, &destructor);
-	probar_recorrer_con_menos();
+	//probar_recorrer_con_menos();
+	//insertar_repetidos();
 
 	return pa2m_mostrar_reporte();
 }

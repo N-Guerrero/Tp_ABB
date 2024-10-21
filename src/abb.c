@@ -15,16 +15,17 @@ abb_t *abb_crear(int (*comparador)(void *, void *))
 	return Arbol;
 }
 
-void nodo_destruir_todo(nodo_t *nodo, void (*destructor)(void *))
+void nodo_destruir_todo(nodo_t *nodo, void (*destructor)(void *), int *contador)
 {
 	if (nodo == NULL) {
 		return;
 	}
 	if (nodo->izq != NULL)
-		nodo_destruir_todo(nodo->izq, destructor);
+		nodo_destruir_todo(nodo->izq, destructor, contador);
 	if (nodo->der != NULL)
-		nodo_destruir_todo(nodo->der, destructor);
+		nodo_destruir_todo(nodo->der, destructor, contador);
 	if (destructor != NULL) {
+		(*contador)++;
 		destructor(nodo->elemento);
 	}
 
@@ -32,12 +33,14 @@ void nodo_destruir_todo(nodo_t *nodo, void (*destructor)(void *))
 }
 void abb_destruir_todo(abb_t *abb, void (*destructor)(void *))
 {
+	int cont = 0;
 	if (abb == NULL)
 		return;
 
 	if (abb->raiz != NULL) {
-		nodo_destruir_todo(abb->raiz, destructor);
+		nodo_destruir_todo(abb->raiz, destructor, &cont);
 	}
+	printf("destructor llamado %d veces\n", cont);
 	abb->raiz = NULL;
 	abb->nodos = 0;
 	abb->comparador = NULL;
@@ -104,14 +107,15 @@ nodo_t *nodo_buscar(nodo_t *nodo_actual, abb_t *abb, void *elemento)
 	if (nodo_actual == NULL)
 		return NULL;
 
-	printf("Comparando elemento buscado %p con nodo actual %p\n", elemento,
-	       nodo_actual->elemento);
-
 	int comparador = abb->comparador(elemento, nodo_actual->elemento);
 
 	if (comparador == 0) {
-		printf("Elemento encontrado %p\n", nodo_actual->elemento);
-		return nodo_actual;
+		if (elemento == nodo_actual->elemento) {
+			return nodo_actual;
+		} else {
+			return NULL;
+		}
+
 	} else if (comparador < 0) {
 		return nodo_buscar(nodo_actual->izq, abb, elemento);
 	} else if (comparador > 0) {
@@ -163,7 +167,7 @@ nodo_t *nodo_quitar_rec(nodo_t *nodo_actual, abb_t *abb, void *elemento,
 	else
 		nodo_actual->der = nodo_quitar_rec(nodo_actual->der, abb,
 						   elemento, encontrado);
-	printf("Devolviendo nodo %p\n", (void *)nodo_actual);
+
 	return nodo_actual;
 }
 
@@ -185,7 +189,7 @@ bool abb_quitar(abb_t *abb, void *buscado, void **encontrado)
 
 	if (*encontrado == NULL)
 		return false;
-	printf("elemento encontrado al quitar %p\n", *encontrado);
+
 	return true;
 }
 
