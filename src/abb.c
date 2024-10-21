@@ -103,9 +103,14 @@ nodo_t *nodo_buscar(nodo_t *nodo_actual, abb_t *abb, void *elemento)
 {
 	if (nodo_actual == NULL)
 		return NULL;
+
+	printf("Comparando elemento buscado %p con nodo actual %p\n", elemento,
+	       nodo_actual->elemento);
+
 	int comparador = abb->comparador(elemento, nodo_actual->elemento);
 
 	if (comparador == 0) {
+		printf("Elemento encontrado %p\n", nodo_actual->elemento);
 		return nodo_actual;
 	} else if (comparador < 0) {
 		return nodo_buscar(nodo_actual->izq, abb, elemento);
@@ -315,7 +320,7 @@ size_t abb_vectorizar_inorden(abb_t *abb, void **vector, size_t tamaño)
 	struct vectorizar datos = { .vector = vector,
 				    .pos = 0,
 				    .tamanio = tamaño };
-	return abb_iterar_inorden(abb, llenar_vector, &datos);
+	return abb_iterar_inorden(abb, llenar_vector, &datos) - 1;
 }
 size_t abb_vectorizar_preorden(abb_t *abb, void **vector, size_t tamaño)
 {
@@ -324,7 +329,7 @@ size_t abb_vectorizar_preorden(abb_t *abb, void **vector, size_t tamaño)
 	struct vectorizar datos = { .vector = vector,
 				    .pos = 0,
 				    .tamanio = tamaño };
-	return abb_iterar_preorden(abb, llenar_vector, &datos);
+	return abb_iterar_preorden(abb, llenar_vector, &datos) - 1;
 }
 size_t abb_vectorizar_postorden(abb_t *abb, void **vector, size_t tamaño)
 {
@@ -333,5 +338,5 @@ size_t abb_vectorizar_postorden(abb_t *abb, void **vector, size_t tamaño)
 	struct vectorizar datos = { .vector = vector,
 				    .pos = 0,
 				    .tamanio = tamaño };
-	return abb_iterar_postorden(abb, llenar_vector, &datos);
+	return abb_iterar_postorden(abb, llenar_vector, &datos) - 1;
 }

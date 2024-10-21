@@ -207,6 +207,12 @@ void probar_eliminar_un_solo()
 		     encontrado, nulo);
 	abb_destruir_todo(abb, &destructor);
 }
+void mostrar_vector(void **vector, size_t tamanio)
+{
+	for (size_t i = 0; i < tamanio; i++) {
+		printf("Posición %zu: %d\n", i, (int)(intptr_t)vector[i]);
+	}
+}
 void probar_recorrer_con_menos()
 {
 	abb_t *abb = abb_crear(comparador);
@@ -215,9 +221,10 @@ void probar_recorrer_con_menos()
 	abb_insertar(abb, (void *)(intptr_t)5);
 	abb_insertar(abb, (void *)(intptr_t)30);
 	void *vector = calloc(3, sizeof(void *));
-	size_t tamanio = abb_vectorizar_inorden(abb, vector, 3);
+	size_t tamanio = abb_vectorizar_preorden(abb, vector, 3);
 
-	pa2m_afirmar(tamanio == 4, "se lleno correctamente el vector(%zu)\n",
+	mostrar_vector((void **)vector, tamanio);
+	pa2m_afirmar(tamanio == 3, "se lleno correctamente el vector(%zu)\n",
 		     tamanio);
 	abb_destruir_todo(abb, &destructor);
 	free(vector);
@@ -225,19 +232,35 @@ void probar_recorrer_con_menos()
 void insertar_mucho_quitar_destruir()
 {
 	abb_t *abb = abb_crear(comparador);
-	int i = 50;
-	while (i <= 100) {
-		abb_insertar(abb, (void *)(intptr_t)i);
+	int i = 100;
+	while (i <= 150) {
+		abb_insertar(abb, (void *)(intptr_t)100);
 		i = i + 10;
 	}
+	abb_insertar(abb, (void *)(intptr_t)100);
+	abb_insertar(abb, (void *)(intptr_t)80);
+	abb_insertar(abb, (void *)(intptr_t)70);
+	abb_insertar(abb, (void *)(intptr_t)60);
+	abb_insertar(abb, (void *)(intptr_t)50);
 	abb_insertar(abb, (void *)(intptr_t)40);
 	abb_insertar(abb, (void *)(intptr_t)30);
 	abb_insertar(abb, (void *)(intptr_t)20);
 	abb_insertar(abb, (void *)(intptr_t)10);
+	printf("cantidad = %zu\n", abb_cantidad(abb));
+	void *encontrado80 = NULL;
+	abb_quitar(abb, (void *)(intptr_t)80, &encontrado80);
+	printf("encontrado 100 %p\n", encontrado80);
+	void *buscado80 = abb_obtener(abb, encontrado80);
+	pa2m_afirmar(buscado80 == NULL, "buscado %p\n", buscado80);
 
 	printf("cantidad = %zu\n", abb_cantidad(abb));
+	void *encontrado100 = NULL;
+	abb_quitar(abb, (void *)(intptr_t)100, &encontrado100);
+	printf("encontrado 100 %p\n", encontrado100);
+	void *buscado100 = abb_obtener(abb, encontrado100);
+	pa2m_afirmar(buscado100 == NULL, "buscado %p\n", buscado100);
 	int j = 50;
-	while (j <= 90) {
+	while (j <= 80) {
 		void *encontrado = NULL;
 		abb_quitar(abb, (void *)(intptr_t)j, &encontrado);
 		printf("encontrado %d\n", (int)(intptr_t)encontrado);
@@ -252,18 +275,18 @@ void insertar_mucho_quitar_destruir()
 int main()
 {
 	pa2m_nuevo_grupo("============== ??? ===============");
-	insertar_mucho_quitar_destruir();
-	abb_t *arbol = arbolCreado();
-	pruebaInsertar(arbol);
+	//insertar_mucho_quitar_destruir();
+	//abb_t *arbol = arbolCreado();
+	//pruebaInsertar(arbol);
 
-	pa2m_nuevo_grupo("============== ??? ===============");
+	//pa2m_nuevo_grupo("============== ??? ===============");
 	//pruebaIterarIN(arbol);
-	pruebaCant(arbol);
-	pruebaIterarPOS(arbol);
-	pruebaIterarPRE(arbol);
+	//pruebaCant(arbol);
+	//pruebaIterarPOS(arbol);
+	//pruebaIterarPRE(arbol);
 	//pruebaIterarIN_hasta(arbol);
-	pruebaIterarPOS_hasta(arbol);
-	pruebaIterarPRE_hasta(arbol);
+	//pruebaIterarPOS_hasta(arbol);
+	//pruebaIterarPRE_hasta(arbol);
 	// pa2m_nuevo_grupo("============== ??? ===============");
 	// pruebaVectorizarIN(arbol);
 	// pruebaVectorizarINmenos(arbol);
@@ -279,8 +302,8 @@ int main()
 	// pruebaCant(arbol);
 	// printf("\n");
 	// probar_eliminar_un_solo();
-	abb_destruir_todo(arbol, &destructor);
-	probar_recorrer_con_menos();
+	//abb_destruir_todo(arbol, &destructor);
+	//probar_recorrer_con_menos();
 
 	return pa2m_mostrar_reporte();
 }
