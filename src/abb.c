@@ -125,12 +125,14 @@ nodo_t *nodo_quitar_rec(nodo_t *nodo_actual, abb_t *abb, void *elemento,
 {
 	if (nodo_actual == NULL)
 		return NULL;
+
 	int comparador = abb->comparador(elemento, nodo_actual->elemento);
 
 	if (comparador == 0) {
 		if (encontrado != NULL) {
 			*encontrado = nodo_actual->elemento;
 		}
+
 		if (nodo_actual->der != NULL && nodo_actual->izq != NULL) {
 			nodo_t *pre = nodo_actual->izq;
 
@@ -141,6 +143,7 @@ nodo_t *nodo_quitar_rec(nodo_t *nodo_actual, abb_t *abb, void *elemento,
 			nodo_actual->elemento = pre->elemento;
 			nodo_actual->izq = nodo_quitar_rec(
 				nodo_actual->izq, abb, pre->elemento, NULL);
+
 			return nodo_actual;
 		}
 
@@ -150,6 +153,7 @@ nodo_t *nodo_quitar_rec(nodo_t *nodo_actual, abb_t *abb, void *elemento,
 
 		free(nodo_actual);
 		abb->nodos--;
+
 		return hijo;
 	}
 	if (comparador < 0)
@@ -159,6 +163,7 @@ nodo_t *nodo_quitar_rec(nodo_t *nodo_actual, abb_t *abb, void *elemento,
 	else
 		nodo_actual->der = nodo_quitar_rec(nodo_actual->der, abb,
 						   elemento, encontrado);
+	printf("Devolviendo nodo %p\n", (void *)nodo_actual);
 	return nodo_actual;
 }
 
@@ -180,6 +185,7 @@ bool abb_quitar(abb_t *abb, void *buscado, void **encontrado)
 
 	if (*encontrado == NULL)
 		return false;
+	printf("elemento encontrado al quitar %p\n", *encontrado);
 	return true;
 }
 
@@ -320,7 +326,11 @@ size_t abb_vectorizar_inorden(abb_t *abb, void **vector, size_t tamaño)
 	struct vectorizar datos = { .vector = vector,
 				    .pos = 0,
 				    .tamanio = tamaño };
-	return abb_iterar_inorden(abb, llenar_vector, &datos) - 1;
+	size_t vectorizacion = abb_iterar_inorden(abb, llenar_vector, &datos);
+	if (vectorizacion > tamaño) {
+		return vectorizacion - 1;
+	}
+	return vectorizacion;
 }
 size_t abb_vectorizar_preorden(abb_t *abb, void **vector, size_t tamaño)
 {
@@ -329,7 +339,11 @@ size_t abb_vectorizar_preorden(abb_t *abb, void **vector, size_t tamaño)
 	struct vectorizar datos = { .vector = vector,
 				    .pos = 0,
 				    .tamanio = tamaño };
-	return abb_iterar_preorden(abb, llenar_vector, &datos) - 1;
+	size_t vectorizacion = abb_iterar_preorden(abb, llenar_vector, &datos);
+	if (vectorizacion > tamaño) {
+		return vectorizacion - 1;
+	}
+	return vectorizacion;
 }
 size_t abb_vectorizar_postorden(abb_t *abb, void **vector, size_t tamaño)
 {
@@ -338,5 +352,9 @@ size_t abb_vectorizar_postorden(abb_t *abb, void **vector, size_t tamaño)
 	struct vectorizar datos = { .vector = vector,
 				    .pos = 0,
 				    .tamanio = tamaño };
-	return abb_iterar_postorden(abb, llenar_vector, &datos) - 1;
+	size_t vectorizacion = abb_iterar_postorden(abb, llenar_vector, &datos);
+	if (vectorizacion > tamaño) {
+		return vectorizacion - 1;
+	}
+	return vectorizacion;
 }
