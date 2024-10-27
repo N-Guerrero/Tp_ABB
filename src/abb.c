@@ -15,11 +15,34 @@ abb_t *abb_crear(int (*comparador)(void *, void *))
 	return Arbol;
 }
 
-void nodo_destruir_todo(nodo_t *nodo, void (*destructor)(void *), int *contador)
+void nodo_mostrar_graficamente(nodo_t *raiz, int nivel)
 {
-	if (nodo == NULL) {
+	if (raiz == NULL) {
 		return;
 	}
+
+	// Recorremos el subárbol derecho primero (lo mostramos a la derecha).
+	nodo_mostrar_graficamente(raiz->der, nivel + 1);
+
+	// Imprimimos el nodo actual con la indentación correspondiente.
+	for (int i = 0; i < nivel; i++) {
+		printf("\t"); // Indentar según el nivel
+	}
+	printf("%d\n",
+	       (int)(intptr_t)raiz
+		       ->elemento); // Aquí puedes adaptar para imprimir el valor real si no es un puntero
+
+	// Recorremos el subárbol izquierdo (lo mostramos a la izquierda).
+	nodo_mostrar_graficamente(raiz->izq, nivel + 1);
+}
+
+void abb_mostrar(abb_t *arbol)
+{
+	nodo_mostrar_graficamente(arbol->raiz, 0);
+}
+
+void nodo_destruir_todo(nodo_t *nodo, void (*destructor)(void *), int *contador)
+{
 	if (nodo->izq != NULL)
 		nodo_destruir_todo(nodo->izq, destructor, contador);
 	if (nodo->der != NULL)
@@ -33,9 +56,10 @@ void nodo_destruir_todo(nodo_t *nodo, void (*destructor)(void *), int *contador)
 }
 void abb_destruir_todo(abb_t *abb, void (*destructor)(void *))
 {
-	int cont = 0;
 	if (abb == NULL)
 		return;
+
+	int cont = 0;
 
 	if (abb->raiz != NULL) {
 		nodo_destruir_todo(abb->raiz, destructor, &cont);
@@ -94,6 +118,7 @@ bool abb_insertar(abb_t *abb, void *elemento)
 		if (abb->raiz == NULL)
 			return false;
 		abb->nodos++;
+		//printf("%d\n", (int)(intptr_t)abb->raiz->elemento);
 		return true;
 	}
 
@@ -107,15 +132,15 @@ nodo_t *nodo_buscar(nodo_t *nodo_actual, abb_t *abb, void *elemento)
 	if (nodo_actual == NULL)
 		return NULL;
 
+	//printf("Comparando elemento buscado %p con nodo actual %p\n", elemento,
+	//       nodo_actual->elemento);
+
 	int comparador = abb->comparador(elemento, nodo_actual->elemento);
 
 	if (comparador == 0) {
-		if (elemento == nodo_actual->elemento) {
-			return nodo_actual;
-		} else {
-			return NULL;
-		}
-
+		//printf("Elemento encontrado %p\n", nodo_actual->elemento);
+		abb_mostrar(abb);
+		return nodo_actual;
 	} else if (comparador < 0) {
 		return nodo_buscar(nodo_actual->izq, abb, elemento);
 	} else if (comparador > 0) {
@@ -167,7 +192,7 @@ nodo_t *nodo_quitar_rec(nodo_t *nodo_actual, abb_t *abb, void *elemento,
 	else
 		nodo_actual->der = nodo_quitar_rec(nodo_actual->der, abb,
 						   elemento, encontrado);
-
+	//printf("Devolviendo nodo %p\n", (void *)nodo_actual);
 	return nodo_actual;
 }
 
@@ -189,7 +214,7 @@ bool abb_quitar(abb_t *abb, void *buscado, void **encontrado)
 
 	if (*encontrado == NULL)
 		return false;
-
+	//printf("elemento encontrado al quitar %p\n", *encontrado);
 	return true;
 }
 

@@ -4,25 +4,24 @@
 
 # TDA ABB
 
-# ESTO ES UN TEMPLATE, COMPLETAR LO QUE HAGA FALTA, ELIMINAR LO QUE SOBRE (INCLUIDA ESTA LÍNEA)
 
-## Alumno: (Nombre Apellido) - (Padrón) - (Mail)
+## Alumno: Nicolas Martin Guerrero - (112514) - guerreronico81@gmail.com
 
 - Para compilar:
 
 ```bash
-línea de compilación
+gcc tp_abb.c src/*.c
 ```
 
 - Para ejecutar:
 
 ```bash
-línea de ejecución
+./a/out pokedex.csv
 ```
 
 - Para ejecutar con valgrind:
 ```bash
-línea con valgrind
+valgrind ./a/out pokedex.csv
 ```
 
 ---
