@@ -233,14 +233,14 @@ void probar_recorrer_con_menos()
 void insertar_mucho_quitar_destruir()
 {
 	abb_t *abb = abb_crear(comparador);
-
-	abb_insertar(abb, (void *)100);
+	int a = 100, b = 100;
+	abb_insertar(abb, (void *)&a);
 	abb_insertar(abb, (void *)110);
 	abb_insertar(abb, (void *)90);
 	abb_insertar(abb, (void *)120);
 	abb_insertar(abb, (void *)130);
 	abb_insertar(abb, (void *)70);
-	//abb_insertar(abb, (void *)100);
+	abb_insertar(abb, (void *)&b);
 	abb_insertar(abb, (void *)80);
 
 	void *encontrado80 = NULL;
@@ -251,9 +251,9 @@ void insertar_mucho_quitar_destruir()
 
 	printf("cantidad = %zu\n", abb_cantidad(abb));
 	void *encontrado100 = NULL;
-	abb_quitar(abb, (void *)100, &encontrado100);
+	abb_quitar(abb, &a, &encontrado100);
 
-	void *buscado100 = abb_obtener(abb, (void *)100);
+	void *buscado100 = abb_obtener(abb, (void *)&a);
 
 	pa2m_afirmar(buscado100 != encontrado100, "buscado %p encontrado %p\n",
 		     buscado100, encontrado100);

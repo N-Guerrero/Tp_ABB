@@ -28,11 +28,7 @@ valgrind ./a/out pokedex.csv
 
 ##  Funcionamiento
 
-Explicación de cómo funcionan las estructuras desarrolladas en el TP y el funcionamiento general del mismo.
-
-Aclarar en esta parte todas las decisiones que se tomaron al realizar el TP, cosas que no se aclaren en el enunciado, fragmentos de código que necesiten explicación extra, etc.
-
-Incluír **EN TODOS LOS TPS** los diagramas relevantes al problema (mayormente diagramas de memoria para explicar las estructuras, pero se pueden utilizar otros diagramas si es necesario).
+Mi ABB utiliza funciones auxiliares, que son recursivas, para moverse entre los nodos del ABB y poder hacer la tarea necesaria dependiendo de la funcion, ya sea iterar o buscar. En el caso de la funcion de eliminar, cuando se encuentra un nodo con 2 hijos, la busqueda de su predecesor inorden la realizo con un while ya que la posicion del predecesor ya es conocida y cumple con ciertos requisitos, como que no tenga hijos y que sea el nodo mas la derecha de la rama izquierda del nodo a eliminar.
 
 ### Por ejemplo:
 

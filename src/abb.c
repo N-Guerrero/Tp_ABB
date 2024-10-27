@@ -64,11 +64,8 @@ void abb_destruir_todo(abb_t *abb, void (*destructor)(void *))
 		nodo_destruir_todo(abb->raiz, destructor, &cont);
 	}
 	printf("destructor llamado %d veces\n", cont);
-	abb->raiz = NULL;
-	abb->nodos = 0;
-	abb->comparador = NULL;
+
 	free(abb);
-	abb = NULL;
 }
 
 void abb_destruir(abb_t *abb)
@@ -141,7 +138,7 @@ nodo_t *nodo_buscar(nodo_t *nodo_actual, abb_t *abb, void *elemento)
 }
 
 nodo_t *nodo_quitar_rec(nodo_t *nodo_actual, abb_t *abb, void *elemento,
-			void **encontrado)
+			void **encontrado, bool *se_encontro)
 {
 	if (nodo_actual == NULL)
 		return NULL;
@@ -149,21 +146,33 @@ nodo_t *nodo_quitar_rec(nodo_t *nodo_actual, abb_t *abb, void *elemento,
 	int comparador = abb->comparador(elemento, nodo_actual->elemento);
 
 	if (comparador == 0) {
-		if (encontrado != NULL) {
+		if (encontrado != NULL && se_encontro != NULL) {
 			*encontrado = nodo_actual->elemento;
+			*se_encontro = true;
 		}
 
-		if (nodo_actual->der != NULL && nodo_actual->izq != NULL) {
-			nodo_t *pre = nodo_actual->izq;
+		if (nodo_actual->izq != NULL && nodo_actual->der != NULL) {
+			nodo_t *predecesor = nodo_actual->izq;
+			nodo_t *padre_predecesor = nodo_actual;
 
-			while (pre->der != NULL) {
-				pre = pre->der;
+			// Encontramos el predecesor inorden (nodo más grande del subárbol izquierdo)
+			while (predecesor->der != NULL) {
+				padre_predecesor = predecesor;
+				predecesor = predecesor->der;
 			}
 
-			nodo_actual->elemento = pre->elemento;
-			nodo_actual->izq = nodo_quitar_rec(
-				nodo_actual->izq, abb, pre->elemento, NULL);
+			// Reemplazamos el elemento actual por el del predecesor
+			nodo_actual->elemento = predecesor->elemento;
 
+			// Eliminamos el predecesor inorden de su posición original
+			if (padre_predecesor->der == predecesor) {
+				padre_predecesor->der = predecesor->izq;
+			} else {
+				padre_predecesor->izq = predecesor->izq;
+			}
+
+			free(predecesor);
+			abb->nodos--;
 			return nodo_actual;
 		}
 
@@ -179,11 +188,13 @@ nodo_t *nodo_quitar_rec(nodo_t *nodo_actual, abb_t *abb, void *elemento,
 	}
 	if (comparador < 0)
 		nodo_actual->izq = nodo_quitar_rec(nodo_actual->izq, abb,
-						   elemento, encontrado);
+						   elemento, encontrado,
+						   se_encontro);
 
 	else
 		nodo_actual->der = nodo_quitar_rec(nodo_actual->der, abb,
-						   elemento, encontrado);
+						   elemento, encontrado,
+						   se_encontro);
 	//printf("Devolviendo nodo %p\n", (void *)nodo_actual);
 	return nodo_actual;
 }
@@ -193,6 +204,7 @@ bool abb_quitar(abb_t *abb, void *buscado, void **encontrado)
 	if (abb == NULL || abb->raiz == NULL || encontrado == NULL) {
 		return false;
 	}
+	bool quitar = false;
 	if (abb->comparador(buscado, abb->raiz->elemento) == 0 &&
 	    abb->raiz->izq == NULL && abb->raiz->der == NULL) {
 		*encontrado = abb->raiz->elemento;
@@ -202,12 +214,11 @@ bool abb_quitar(abb_t *abb, void *buscado, void **encontrado)
 		return true;
 	}
 
-	abb->raiz = nodo_quitar_rec(abb->raiz, abb, buscado, encontrado);
+	abb->raiz =
+		nodo_quitar_rec(abb->raiz, abb, buscado, encontrado, &quitar);
 
-	if (*encontrado == NULL)
-		return false;
-	//printf("elemento encontrado al quitar %p\n", *encontrado);
-	return true;
+	printf("elemento encontrado al quitar %p\n", *encontrado);
+	return quitar;
 }
 
 size_t abb_cantidad(abb_t *abb)
