@@ -240,7 +240,7 @@ void insertar_mucho_quitar_destruir()
 	abb_insertar(abb, (void *)120);
 	abb_insertar(abb, (void *)130);
 	abb_insertar(abb, (void *)70);
-	abb_insertar(abb, (void *)100);
+	//abb_insertar(abb, (void *)100);
 	abb_insertar(abb, (void *)80);
 
 	void *encontrado80 = NULL;
@@ -342,6 +342,8 @@ int main()
 	insertar_quitar();
 	probar_recorrer_con_menos();
 	insertar_repetidos();
+
+	pa2m_nuevo_grupo("============== ??? ===============");
 
 	return pa2m_mostrar_reporte();
 }

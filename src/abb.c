@@ -28,9 +28,8 @@ void nodo_mostrar_graficamente(nodo_t *raiz, int nivel)
 	for (int i = 0; i < nivel; i++) {
 		printf("\t"); // Indentar según el nivel
 	}
-	printf("%d\n",
-	       (int)(intptr_t)raiz
-		       ->elemento); // Aquí puedes adaptar para imprimir el valor real si no es un puntero
+	printf("%p\n",
+	       raiz->elemento); // Aquí puedes adaptar para imprimir el valor real si no es un puntero
 
 	// Recorremos el subárbol izquierdo (lo mostramos a la izquierda).
 	nodo_mostrar_graficamente(raiz->izq, nivel + 1);
@@ -60,7 +59,7 @@ void abb_destruir_todo(abb_t *abb, void (*destructor)(void *))
 		return;
 
 	int cont = 0;
-
+	printf("cantidad = %zu\n", abb_cantidad(abb));
 	if (abb->raiz != NULL) {
 		nodo_destruir_todo(abb->raiz, destructor, &cont);
 	}
@@ -113,16 +112,8 @@ bool abb_insertar(abb_t *abb, void *elemento)
 	if (abb == NULL)
 		return false;
 
-	if (abb->raiz == NULL) {
-		abb->raiz = nodo_crear(elemento);
-		if (abb->raiz == NULL)
-			return false;
-		abb->nodos++;
-		//printf("%d\n", (int)(intptr_t)abb->raiz->elemento);
-		return true;
-	}
-
-	if (nodo_insertar(abb->raiz, nodo_crear(elemento), abb) != NULL)
+	abb->raiz = nodo_insertar(abb->raiz, nodo_crear(elemento), abb);
+	if (abb->raiz != NULL)
 		return true;
 	return false;
 }
@@ -138,7 +129,7 @@ nodo_t *nodo_buscar(nodo_t *nodo_actual, abb_t *abb, void *elemento)
 	int comparador = abb->comparador(elemento, nodo_actual->elemento);
 
 	if (comparador == 0) {
-		//printf("Elemento encontrado %p\n", nodo_actual->elemento);
+		printf("Elemento encontrado %p\n", nodo_actual->elemento);
 		abb_mostrar(abb);
 		return nodo_actual;
 	} else if (comparador < 0) {
@@ -180,6 +171,7 @@ nodo_t *nodo_quitar_rec(nodo_t *nodo_actual, abb_t *abb, void *elemento,
 		if (hijo == NULL)
 			hijo = nodo_actual->der;
 
+		nodo_actual->elemento = NULL;
 		free(nodo_actual);
 		abb->nodos--;
 
