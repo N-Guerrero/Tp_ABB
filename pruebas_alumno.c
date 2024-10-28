@@ -18,7 +18,9 @@ int comparadornum(void *_a, void *_b)
 }
 void destructor(void *elemento)
 {
-	printf("puntero %d destruido\n", (int)(intptr_t)elemento);
+	int *numero = elemento;
+	(*numero)++;
+	printf("puntero a %d destruido\n", *(int *)elemento);
 }
 
 bool mostrar(void *elemento, void *ctx)
@@ -305,45 +307,66 @@ void insertar_quitar()
 	pa2m_afirmar(buscadoB == NULL, "elemento quitado no se encontro");
 	abb_destruir_todo(abb, destructor);
 }
+
+void prueba_destructor_todo()
+{
+	abb_t *abb = abb_crear(comparador);
+	int b = 10, c = 5, d = 15, f = 20;
+	abb_insertar(abb, &b);
+	abb_insertar(abb, &c);
+	abb_insertar(abb, &d);
+	abb_insertar(abb, &f);
+	printf("cantidad = %zu\n", abb_cantidad(abb));
+	abb_destruir_todo(abb, destructor);
+	pa2m_afirmar(b == 11,
+		     "variable b con numero original 10, ahora es %d\n", b);
+	pa2m_afirmar(c == 6, "variable c con numero original 5, ahora es %d\n",
+		     c);
+	pa2m_afirmar(d == 16,
+		     "variable d con numero original 15, ahora es %d\n", d);
+	pa2m_afirmar(f == 21,
+		     "variable f con numero original 20, ahora es %d\n", f);
+}
 int main()
 {
-	pa2m_nuevo_grupo("============== ??? ===============");
-	insertar_mucho_quitar_destruir();
-	abb_t *arbol = arbolCreado();
-	pruebaInsertar(arbol);
+	// pa2m_nuevo_grupo("============== ??? ===============");
+	// insertar_mucho_quitar_destruir();
+	// abb_t *arbol = arbolCreado();
+	// pruebaInsertar(arbol);
 
-	pa2m_nuevo_grupo("============== ??? ===============");
-	pruebaIterarIN(arbol);
-	pruebaCant(arbol);
-	pruebaIterarPOS(arbol);
-	pruebaIterarPRE(arbol);
-	pruebaIterarIN_hasta(arbol);
-	pruebaIterarPOS_hasta(arbol);
-	pruebaIterarPRE_hasta(arbol);
-	pa2m_nuevo_grupo("============== ??? ===============");
-	pruebaVectorizarIN(arbol);
-	pruebaVectorizarINmenos(arbol);
-	pruebaVectorizarPRE(arbol);
-	pruebaVectorizarPOS(arbol);
-	pa2m_nuevo_grupo("============== ??? ===============");
-	pruebaObt(arbol);
-	pruebaQuitar(arbol);
-	pa2m_nuevo_grupo("============== ??? ===============");
+	// pa2m_nuevo_grupo("============== ??? ===============");
+	// pruebaIterarIN(arbol);
+	// pruebaCant(arbol);
+	// pruebaIterarPOS(arbol);
+	// pruebaIterarPRE(arbol);
+	// pruebaIterarIN_hasta(arbol);
+	// pruebaIterarPOS_hasta(arbol);
+	// pruebaIterarPRE_hasta(arbol);
+	// pa2m_nuevo_grupo("============== ??? ===============");
+	// pruebaVectorizarIN(arbol);
+	// pruebaVectorizarINmenos(arbol);
+	// pruebaVectorizarPRE(arbol);
+	// pruebaVectorizarPOS(arbol);
+	// pa2m_nuevo_grupo("============== ??? ===============");
+	// pruebaObt(arbol);
+	// pruebaQuitar(arbol);
+	// pa2m_nuevo_grupo("============== ??? ===============");
 	// pruebaCant6(arbol);
-	probarNULL(arbol);
+	//probarNULL(arbol);
 	//abb_destruir(arbol);
 
 	// printf("\n");
-	probar_eliminar_un_solo();
-	pruebaObtenerRaiz(arbol);
+	// probar_eliminar_un_solo();
+	// pruebaObtenerRaiz(arbol);
 	//pruebaCant(arbol);
-	abb_destruir_todo(arbol, &destructor);
+	// abb_destruir_todo(arbol, &destructor);
 
-	insertar_quitar();
-	probar_recorrer_con_menos();
-	insertar_repetidos();
+	// insertar_quitar();
+	// probar_recorrer_con_menos();
+	// insertar_repetidos();
 
 	pa2m_nuevo_grupo("============== ??? ===============");
+	prueba_destructor_todo();
 
 	return pa2m_mostrar_reporte();
 }
