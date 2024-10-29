@@ -15,31 +15,6 @@ abb_t *abb_crear(int (*comparador)(void *, void *))
 	return Arbol;
 }
 
-void nodo_mostrar_graficamente(nodo_t *raiz, int nivel)
-{
-	if (raiz == NULL) {
-		return;
-	}
-
-	// Recorremos el subárbol derecho primero (lo mostramos a la derecha).
-	nodo_mostrar_graficamente(raiz->der, nivel + 1);
-
-	// Imprimimos el nodo actual con la indentación correspondiente.
-	for (int i = 0; i < nivel; i++) {
-		printf("\t"); // Indentar según el nivel
-	}
-	printf("%p\n",
-	       raiz->elemento); // Aquí puedes adaptar para imprimir el valor real si no es un puntero
-
-	// Recorremos el subárbol izquierdo (lo mostramos a la izquierda).
-	nodo_mostrar_graficamente(raiz->izq, nivel + 1);
-}
-
-void abb_mostrar(abb_t *arbol)
-{
-	nodo_mostrar_graficamente(arbol->raiz, 0);
-}
-
 void nodo_destruir_todo(nodo_t *nodo, void (*destructor)(void *), int *contador)
 {
 	if (nodo->izq != NULL)
@@ -146,25 +121,23 @@ nodo_t *nodo_quitar_rec(nodo_t *nodo_actual, abb_t *abb, void *elemento,
 	int comparador = abb->comparador(elemento, nodo_actual->elemento);
 
 	if (comparador == 0) {
-		if (encontrado != NULL && se_encontro != NULL) {
-			*encontrado = nodo_actual->elemento;
+		if (se_encontro != NULL)
 			*se_encontro = true;
+		if (encontrado != NULL) {
+			*encontrado = nodo_actual->elemento;
 		}
 
 		if (nodo_actual->izq != NULL && nodo_actual->der != NULL) {
 			nodo_t *predecesor = nodo_actual->izq;
 			nodo_t *padre_predecesor = nodo_actual;
 
-			// Encontramos el predecesor inorden (nodo más grande del subárbol izquierdo)
 			while (predecesor->der != NULL) {
 				padre_predecesor = predecesor;
 				predecesor = predecesor->der;
 			}
 
-			// Reemplazamos el elemento actual por el del predecesor
 			nodo_actual->elemento = predecesor->elemento;
 
-			// Eliminamos el predecesor inorden de su posición original
 			if (padre_predecesor->der == predecesor) {
 				padre_predecesor->der = predecesor->izq;
 			} else {
@@ -201,23 +174,14 @@ nodo_t *nodo_quitar_rec(nodo_t *nodo_actual, abb_t *abb, void *elemento,
 
 bool abb_quitar(abb_t *abb, void *buscado, void **encontrado)
 {
-	if (abb == NULL || abb->raiz == NULL || encontrado == NULL) {
+	if (abb == NULL || abb->raiz == NULL) {
 		return false;
 	}
 	bool quitar = false;
-	if (abb->comparador(buscado, abb->raiz->elemento) == 0 &&
-	    abb->raiz->izq == NULL && abb->raiz->der == NULL) {
-		*encontrado = abb->raiz->elemento;
-		free(abb->raiz);
-		abb->raiz = NULL;
-		abb->nodos--;
-		return true;
-	}
 
 	abb->raiz =
 		nodo_quitar_rec(abb->raiz, abb, buscado, encontrado, &quitar);
 
-	printf("elemento encontrado al quitar %p\n", *encontrado);
 	return quitar;
 }
 
