@@ -102,7 +102,7 @@ nodo_t *nodo_buscar(nodo_t *nodo_actual, abb_t *abb, void *elemento)
 
 	if (comparador == 0) {
 		printf("Elemento encontrado %p\n", nodo_actual->elemento);
-		abb_mostrar(abb);
+
 		return nodo_actual;
 	} else if (comparador < 0) {
 		return nodo_buscar(nodo_actual->izq, abb, elemento);
