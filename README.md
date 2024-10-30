@@ -29,6 +29,9 @@ valgrind ./a/out pokedex.csv
 ##  Funcionamiento
 
 La estructura de cada nodo del ABB tiene 3 punteros: uno al elemento que guarda y los otros dos apuntan a un hijo cada uno. Esto permite tener un ABB que almacena cualquier tipo de dato, pero es necesario tener una forma de comparar los datos almacenados. Para lograr esta comparación, se requiere una función comparadora que se almacena en la estructura del ABB, que tiene un puntero a esa función comparadora, un puntero al primer nodo del ABB (la raíz) y un `int` que indica la cantidad de nodos que se encuentran en el árbol.
+<div align="center">
+<img  width=70% src="img/ABB-diag.svg">
+</div>
 
 Mi ABB utiliza funciones auxiliares, que son recursivas, para moverse entre los nodos del ABB y realizar la tarea necesaria dependiendo de la función, ya sea iterar o buscar. En el caso de la función de eliminar, cuando se encuentra un nodo con 2 hijos, la búsqueda de su predecesor inorden se realiza con un while, ya que la posición del predecesor ya es conocida y cumple con ciertos requisitos, como que no tenga hijos y que sea el nodo más a la derecha de la rama izquierda del nodo a eliminar.
 
@@ -45,7 +48,7 @@ struct vectorizar {
 	size_t tamanio;
 };
 ```
-
+<img  height=80% src="img/ABB_Vect_diag.svg">
 
 
 ```c
