@@ -30,6 +30,20 @@ valgrind ./a/out pokedex.csv
 
 Mi ABB utiliza funciones auxiliares, que son recursivas, para moverse entre los nodos del ABB y poder hacer la tarea necesaria dependiendo de la funcion, ya sea iterar o buscar. En el caso de la funcion de eliminar, cuando se encuentra un nodo con 2 hijos, la busqueda de su predecesor inorden la realizo con un while ya que la posicion del predecesor ya es conocida y cumple con ciertos requisitos, como que no tenga hijos y que sea el nodo mas la derecha de la rama izquierda del nodo a eliminar.
 
+
+```c
+nodo_t *pre = nodo_actual->izq;
+
+			while (pre->der != NULL) {
+				pre = pre->der;
+			}
+
+			nodo_actual->elemento = pre->elemento;
+			nodo_actual->izq = nodo_quitar_rec(
+				nodo_actual->izq, abb, pre->elemento, NULL);
+
+			return nodo_actual;
+```
 ### Por ejemplo:
 
 El programa funciona abriendo el archivo pasado como parámetro y leyendolo línea por línea. Por cada línea crea un registro e intenta agregarlo al vector. La función de lectura intenta leer todo el archivo o hasta encontrar el primer error. Devuelve un vector con todos los registros creados.
