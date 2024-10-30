@@ -28,7 +28,10 @@ valgrind ./a/out pokedex.csv
 
 ##  Funcionamiento
 
-Mi ABB utiliza funciones auxiliares, que son recursivas, para moverse entre los nodos del ABB y poder hacer la tarea necesaria dependiendo de la funcion, ya sea iterar o buscar. En el caso de la funcion de eliminar, cuando se encuentra un nodo con 2 hijos, la busqueda de su predecesor inorden la realizo con un while ya que la posicion del predecesor ya es conocida y cumple con ciertos requisitos, como que no tenga hijos y que sea el nodo mas la derecha de la rama izquierda del nodo a eliminar.
+La estructura de cada nodo del ABB tiene 3 punteros, uno al elemento que guarda y los otros dos apuntan a un hijo cada uno. Esto permite tener un ABB que almacena cualquier tipo de dato, pero es necesario tener una forma de comparar los datos almacenados. Para lograr esta comparacion se requiere una funcion comparadora que se almacena en la estructura del ABB, que tiene un puntero a esa funcion comparadora, un puntero al primer nodo del ABB(la raiz) y un `int` que indica la cantidad de nodos que se encuentran en el arbol.
+
+Mi ABB utiliza funciones auxiliares, que son recursivas, para moverse entre los nodos del ABB y poder hacer la tarea necesaria dependiendo de la funcion, ya sea iterar o buscar. En el caso de la funcion de eliminar, cuando se encuentra un nodo con 2 hijos, la busqueda de su predecesor inorden se realiza con un while ya que la posicion del predecesor ya es conocida y cumple con ciertos requisitos, como que no tenga hijos y que sea el nodo mas la derecha de la rama izquierda del nodo a eliminar.
+Por el diseño de los arboles la recursividad es una heramienta mumy util, especialmente para iterar, por eso use recursividad en casi todos los casos, 
 
 
 ```c
