@@ -109,3 +109,6 @@ Osea que el Arbol base es mas general pero lento, el Arbol Binario es mas rapido
     tomadas (por ejemplo, si tal o cuál funciones fue planteada de forma
     recursiva, iterativa o mixta y por qué, que dificultades encontró al manejar
     los nodos y punteros, reservar y liberar memoria, etc).
+
+
+Fue explicado previamente. Pero de manera resumida, decidi usar funciones recusivas siempre que sea posible porque es lo convencional con un ABB. Para recorrer el ABB en cualquier funcion que requiere una busqueda, uso el comparador para saber en que direccion dirigirme y no encontre ningun problema con el manejo de memoria, sino con la contavilizacion de iteraciones, vectorizar y con quitar sin gurdar el elemento quitado en un puntero(error mio por no entender bien la definicion de quitar, pero las pruebas que usan quitar sin guardar el puntero no lo informan).
