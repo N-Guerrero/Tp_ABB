@@ -34,11 +34,11 @@ void abb_destruir_todo(abb_t *abb, void (*destructor)(void *))
 		return;
 
 	int cont = 0;
-	printf("cantidad = %zu\n", abb_cantidad(abb));
+	
 	if (abb->raiz != NULL) {
 		nodo_destruir_todo(abb->raiz, destructor, &cont);
 	}
-	printf("destructor llamado %d veces\n", cont);
+	
 
 	free(abb);
 }
@@ -95,13 +95,12 @@ nodo_t *nodo_buscar(nodo_t *nodo_actual, abb_t *abb, void *elemento)
 	if (nodo_actual == NULL)
 		return NULL;
 
-	//printf("Comparando elemento buscado %p con nodo actual %p\n", elemento,
-	//       nodo_actual->elemento);
+	
 
 	int comparador = abb->comparador(elemento, nodo_actual->elemento);
 
 	if (comparador == 0) {
-		printf("Elemento encontrado %p\n", nodo_actual->elemento);
+		
 
 		return nodo_actual;
 	} else if (comparador < 0) {
@@ -128,24 +127,17 @@ nodo_t *nodo_quitar_rec(nodo_t *nodo_actual, abb_t *abb, void *elemento,
 		}
 
 		if (nodo_actual->izq != NULL && nodo_actual->der != NULL) {
-			nodo_t *predecesor = nodo_actual->izq;
-			nodo_t *padre_predecesor = nodo_actual;
+			nodo_t *pre = nodo_actual->izq;
 
-			while (predecesor->der != NULL) {
-				padre_predecesor = predecesor;
-				predecesor = predecesor->der;
+			while (pre->der != NULL) {
+				pre = pre->der;
 			}
 
-			nodo_actual->elemento = predecesor->elemento;
+			nodo_actual->elemento = pre->elemento;
+			nodo_actual->izq = nodo_quitar_rec(nodo_actual->izq,
+							   abb, pre->elemento,
+							   NULL, NULL);
 
-			if (padre_predecesor->der == predecesor) {
-				padre_predecesor->der = predecesor->izq;
-			} else {
-				padre_predecesor->izq = predecesor->izq;
-			}
-
-			free(predecesor);
-			abb->nodos--;
 			return nodo_actual;
 		}
 
@@ -168,7 +160,7 @@ nodo_t *nodo_quitar_rec(nodo_t *nodo_actual, abb_t *abb, void *elemento,
 		nodo_actual->der = nodo_quitar_rec(nodo_actual->der, abb,
 						   elemento, encontrado,
 						   se_encontro);
-	//printf("Devolviendo nodo %p\n", (void *)nodo_actual);
+	
 	return nodo_actual;
 }
 

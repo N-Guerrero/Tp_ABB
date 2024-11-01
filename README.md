@@ -51,21 +51,20 @@ struct vectorizar {
 <img  height=80% src="img/ABB_Vect_diag.svg">
 
 
-```c
-nodo_t *pre = nodo_actual->izq;
-
-			while (pre->der != NULL) {
-				pre = pre->der;
-			}
-
-			nodo_actual->elemento = pre->elemento;
-			nodo_actual->izq = nodo_quitar_rec(
-				nodo_actual->izq, abb, pre->elemento, NULL);
-
-			return nodo_actual;
-```
 
 ---
 
 ## Respuestas a las preguntas teóricas
-Incluír acá las respuestas a las preguntas del enunciado (si aplica).
+
+-   Explique teóricamente (y utilizando gráficos) qué es una árbol, árbol
+    binario y árbol binario de búsqueda. Explique cómo funcionan, cuáles son sus
+    operaciones básicas (incluyendo el análisis de complejidad de cada una de
+    ellas) y por qué es importante la distinción de cada uno de estos diferentes
+    tipos de árboles. Ayúdese con diagramas para explicar.
+
+	
+
+-   Explique la implementación de ABB realizada y las decisiones de diseño
+    tomadas (por ejemplo, si tal o cuál funciones fue planteada de forma
+    recursiva, iterativa o mixta y por qué, que dificultades encontró al manejar
+    los nodos y punteros, reservar y liberar memoria, etc).
