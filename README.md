@@ -86,21 +86,21 @@ Los 3 tipos de Arboles comparten operaciones, que son:
 
 `A=Arbol,AB=Arbol Binario,ABB=Arbol Binario de Busqueda`
 
-complejidad de crear: A=O(1),AB=O(1),ABB=O(1)
+-complejidad de crear: A=O(1),AB=O(1),ABB=O(1)
 
-complejidad de destruir: A=O(n),AB=O(n),ABB=O(n)
+-complejidad de destruir: A=O(n),AB=O(n),ABB=O(n)
 
-complejidad de vacio: A=O(1),AB=O(1),ABB=O(1)
+-complejidad de vacio: A=O(1),AB=O(1),ABB=O(1)
 
-complejidad de insertar: A=O(1),AB=O(n),ABB=O(n)
+-complejidad de insertar: A=O(1),AB=O(n),ABB=O(n)
 
-complejidad de eliminar: A=O(n),AB=O(n),ABB=O(n)
+-complejidad de eliminar: A=O(n),AB=O(n),ABB=O(n)
 
-complejidad de buscar: A=O(n),AB=O(n),ABB=O(n)
+-complejidad de buscar: A=O(n),AB=O(n),ABB=O(n)
 
-complejidad de recorrer: A=O(n),AB=O(n),ABB=O(n)
+-complejidad de recorrer: A=O(n),AB=O(n),ABB=O(n)
 
-El pero caso para un ABB es cuando esta muy desbalanceado, pero cuando el ABB esta balanceado varias operaciones(insertar,eliminar,buscar) pasan a ser O(log n)
+El peor caso para un ABB es cuando esta muy desbalanceado, pero cuando el ABB esta balanceado varias operaciones(insertar,eliminar,buscar) pasan a ser O(log n)
 
 Distinguir a los tipos de arboles es importante ya que cada Arbol tiene un propocito diferente, el Arbol permite tener cualquier cantidad de nodos hijos, el Arbol binario se limita a tener solo 2 hijos para faciltar el recorrido pero no tiene orden, y el Arbol Binario de Busqueda se limita a tener 2 hijos pero tienen que cumplir reglas para mantener el orden que facilita las operaciones.
 Osea que el Arbol base es mas general pero lento, el Arbol Binario es mas rapido pero limta su jerarquia, y el Arbol Binario de Busqueda es todavia mas rapido pero ademas limita a sus nodos a cumplir ciertas reglas.
