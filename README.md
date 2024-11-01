@@ -62,9 +62,50 @@ struct vectorizar {
     ellas) y por qué es importante la distinción de cada uno de estos diferentes
     tipos de árboles. Ayúdese con diagramas para explicar.
 
-	
+Un Arbol es una coleccion de nodos con orden jerarquico. Los nodos son los elementos o vertices del  ́arbol que apuntan a otros nodos, conocidos como sus hijos y cada hijo puede tener su propio conjunto de hijos. El nodo principal se llama raíz, y todos los demás nodos se derivan de él, organizándose en niveles. Un  ́arbol puede ser definido de varias formas. Una forma natural es hacerlo en forma recursiva. 
+<div align="center">	
+ <img  height=600px src="img/Arbol_base.svg">
+</div>
 
--   Explique la implementación de ABB realizada y las decisiones de diseño
+El Arbol binario es un tipo de Arbol, osea que comparte su naturaleza jeraquica, sus niveles, la forma de ser definido, pero la diferencia caracteristica es que los nodos estan limitados a tener solo 2 hijos. Los Arboles Binarios estan  ́ıntimamente relacionados con las operaciones de busqueda. Cuando se realiza una busqueda se necesita saber para que lado se debe continuar, si a la derecha o a la izquierda.
+<div align="center">	
+ <img  height=600px src="img/Arbol_binario.svg">
+</div>
+El Arbol Binario de Busqueda es un tipo de Arbol binario, es caracterizado por tener reglas que todos los nodos deben cumplir, por ejemplo, todos los valores del subárbol izquierdo son menores que el valor del nodo, y todos los valores del subárbol derecho son mayores. Tener estas reglas facilitan la busqueda de nodos en el arbol.
+
+
+Los 3 tipos de Arboles comparten operaciones, que son:
+
+* crear
+* destruir
+* vacio
+* insertar
+* eliminar
+* buscar
+* recorrer
+
+`A=Arbol,AB=Arbol Binario,ABB=Arbol Binario de Busqueda`
+
+complejidad de crear: A=O(1),AB=O(1),ABB=O(1)
+
+complejidad de destruir: A=O(n),AB=O(n),ABB=O(n)
+
+complejidad de vacio: A=O(1),AB=O(1),ABB=O(1)
+
+complejidad de insertar: A=O(1),AB=O(n),ABB=O(n)
+
+complejidad de eliminar: A=O(n),AB=O(n),ABB=O(n)
+
+complejidad de buscar: A=O(n),AB=O(n),ABB=O(n)
+
+complejidad de recorrer: A=O(n),AB=O(n),ABB=O(n)
+
+El pero caso para un ABB es cuando esta muy desbalanceado, pero cuando el ABB esta balanceado varias operaciones(insertar,eliminar,buscar) pasan a ser O(log n)
+
+Distinguir a los tipos de arboles es importante ya que cada Arbol tiene un propocito diferente, el Arbol permite tener cualquier cantidad de nodos hijos, el Arbol binario se limita a tener solo 2 hijos para faciltar el recorrido pero no tiene orden, y el Arbol Binario de Busqueda se limita a tener 2 hijos pero tienen que cumplir reglas para mantener el orden que facilita las operaciones.
+Osea que el Arbol base es mas general pero lento, el Arbol Binario es mas rapido pero limta su jerarquia, y el Arbol Binario de Busqueda es todavia mas rapido pero ademas limita a sus nodos a cumplir ciertas reglas.
+
+--   Explique la implementación de ABB realizada y las decisiones de diseño
     tomadas (por ejemplo, si tal o cuál funciones fue planteada de forma
     recursiva, iterativa o mixta y por qué, que dificultades encontró al manejar
     los nodos y punteros, reservar y liberar memoria, etc).
