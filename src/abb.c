@@ -34,11 +34,10 @@ void abb_destruir_todo(abb_t *abb, void (*destructor)(void *))
 		return;
 
 	int cont = 0;
-	
+
 	if (abb->raiz != NULL) {
 		nodo_destruir_todo(abb->raiz, destructor, &cont);
 	}
-	
 
 	free(abb);
 }
@@ -95,13 +94,9 @@ nodo_t *nodo_buscar(nodo_t *nodo_actual, abb_t *abb, void *elemento)
 	if (nodo_actual == NULL)
 		return NULL;
 
-	
-
 	int comparador = abb->comparador(elemento, nodo_actual->elemento);
 
 	if (comparador == 0) {
-		
-
 		return nodo_actual;
 	} else if (comparador < 0) {
 		return nodo_buscar(nodo_actual->izq, abb, elemento);
@@ -160,7 +155,7 @@ nodo_t *nodo_quitar_rec(nodo_t *nodo_actual, abb_t *abb, void *elemento,
 		nodo_actual->der = nodo_quitar_rec(nodo_actual->der, abb,
 						   elemento, encontrado,
 						   se_encontro);
-	
+
 	return nodo_actual;
 }
 
